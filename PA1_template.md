@@ -6,7 +6,8 @@ Since the forked GitHub contains the "activity.zip" file, the below script will
 check to see if it has already been extracted. If not, we will extract the 
 "activity.csv" file to the working directory. The file will be imported into a 
 data frame named "activitydata."
-```{r}
+
+```r
 if(!file.exists("activity.csv")){
         unzip("activity.zip")
 }
@@ -21,7 +22,8 @@ display the daily totals. Also, ablines are used to indicate the mean and median
 of the daily totals. The mean and median values are provided in the legend to
 avoid cluttering the y-axis.
 
-```{r results='asis'}
+
+```r
 daytotals<-tapply(activitydata$steps,activitydata$date,FUN=sum,na.rm=TRUE)
 
 barplot(daytotals,xlab="Date",ylab="Total Steps",col="red",
@@ -39,13 +41,16 @@ legend("top", lwd=1, col = c("blue", "purple"),
        legend = c(MeanLabel, MedianLabel))
 ```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
 ## What is the average daily activity pattern?
 To obtain the average number of steps per five minute interval the below script
 uses tapply to obtain the mean for each interval across all the days of the 
 study. These averages are graphically display using a line plot. Also, the five
 minute interval with the maximum average number of steps is indicated by the 
 red vertical line.
-```{r}
+
+```r
 FiveMinIntAvg<-tapply(activitydata$steps,activitydata$interval,FUN=mean,
                          na.rm=TRUE)
 
@@ -60,13 +65,16 @@ abline(v=MaxInt,col="red")
 axis(1,at=MaxInt,labels=MaxInt,col.axis="red")
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 ## Imputing missing values
 
 
-```{r}
+
+```r
 numnas<-sum(is.na(activitydata$steps))
 ```
-The total number of missing values is `r numnas`.
+The total number of missing values is 2304.
 
 Below the script uses the daily means to impute the missing values using the
 replace function and ddply.The modified data set is plotted using a bar plot as
@@ -78,7 +86,8 @@ Therefore, those days have a mean of zero which is essentially the same as
 ignoring the NAs. Imputing the mean of the 5 minute intervals would have a 
 different impact as the NAs would take on the mean value of their respective
 5 minute interval.
-```{r}
+
+```r
 library(plyr)
 
 modactivitydata<-activitydata
@@ -104,6 +113,8 @@ legend("top", lwd=1, col = c("blue", "purple"),
        legend = c(MeanLabel, MedianLabel))
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
 ## Are there differences in activity patterns between weekdays and weekends?
 The script below plots the average number of steps per five minute interval for
 weekdays and weekends using the modified data set with imputed NA values. An
@@ -114,7 +125,8 @@ five minute interval for weekdays and weekends. The subject seems to have a
 spike of activity during weekday mornings with less activity later in the day.
 On weekends, activity seems to be more spread out throughout the day including
 a bit later in the day.
-```{r}
+
+```r
 library(ggplot2)
 
 modactivitydata$weekday<-
@@ -126,4 +138,6 @@ modactivitydata$weekday<-
   p<-p+facet_wrap(~weekday,ncol=1)
   print(p)
 ```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
